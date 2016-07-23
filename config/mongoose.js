@@ -1,7 +1,8 @@
 'use strict';
 
 const mongoose = require('mongoose');
-const Models = require('../app_modules/user/data/models');
+const UserModels = require('../app_modules/user/data/models');
+const ExpenseModels = require('../app_modules/expense/data/models');
 
 /**
  * Opens a connection to the MongoDB database and initializes needed models.
@@ -25,5 +26,7 @@ module.exports = (config) => {
   });
 
   // Models initialization
-  Models.User.init();
+  UserModels.User.init();
+  ExpenseModels.Category.init();
+  ExpenseModels.Expense.init();
 };

@@ -1,7 +1,7 @@
 'use strict';
 
-const userController = require('../app_modules/user/controllers').userController;
-const authController = require('../app_modules/user/controllers').authController;
+const UserController = require('../app_modules/user/controllers/user.controller');
+const AuthController = require('../app_modules/user/controllers/auth.controller');
 const errorHandler = require('./error-handler');
 const expressJwt = require('express-jwt');
 const consts = require('../utilities/consts');
@@ -15,11 +15,11 @@ module.exports = (app) => {
 
   // Users API
   app.route('/api/users')
-    .post(userController.createUser);
+    .post(UserController.createUser);
 
   // Auth API
-  app.post('/auth/login', authController.login);
-  app.get('/auth/valid', authenticate, authController.isJwtValid);
+  app.post('/auth/login', AuthController.login);
+  app.get('/auth/valid', authenticate, AuthController.isJwtValid);
 
   // 404
   app.get('*', (req, res) => {

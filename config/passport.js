@@ -2,7 +2,7 @@
 
 const passport = require('passport');
 const LocalStrategy = require('passport-local');
-const usersData = require('../app_modules/user/data/users');
+const usersData = require('../app_modules/user/data/users.data');
 
 /**
  * Defines user authentication strategies with Passport.
@@ -18,7 +18,7 @@ module.exports = () => {
         return;
       }
 
-      if (user && user.isPasswordValid(password)) {
+      if (user && user.isPasscodeValid(password)) {
         return done(null, user);
       } else {
         return done(null, false);
