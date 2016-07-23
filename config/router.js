@@ -1,34 +1,30 @@
-"use strict";
+'use strict';
 
-var userControllers = require("../app_modules/user/controllers"),
-    errorHandler = require("./errorHandler"),
-    expressJwt = require("express-jwt"),
-    consts = require("../utilities/consts");
+const userController = require('../app_modules/user/controllers').userController;
+const authController = require('../app_modules/user/controllers').authController;
+const errorHandler = require('./errorHandler');
+const expressJwt = require('express-jwt');
+const consts = require('../utilities/consts');
 
 /**
  * Router.
  * @param app - Express
  */
-module.exports = function (app) {
-    var authenticate = expressJwt({ secret: consts.JWT_SECRET });
+module.exports = (app) => {
+  const authenticate = expressJwt({ secret: consts.JWT_SECRET });
 
-    // Home page (Angular init)
-    app.get("/", function (req, res) {
-        res.render("index");
-    });
+  // Users API
+  app.route('/api/users')
+    .post(userController.createUser);
 
-    // Users API
-    app.route("/api/users")
-       .post(userControllers.user.createUser);
+  // Auth API
+  app.post('/auth/login', authController.login);
+  app.get('/auth/valid', authenticate, authController.isJwtValid);
 
-    // Auth API
-    app.post("/auth/login", userControllers.auth.login);
-    app.get("/auth/valid", authenticate, userControllers.auth.isJwtValid);
+  // 404
+  app.get('*', (req, res) => {
+    return res.redirect(req.protocol + '://' + req.get('host'));
+  });
 
-    // 404
-    app.get("*", function (req, res) {
-        return res.redirect(req.protocol + "://" + req.get("host"));
-    });
-
-    errorHandler(app);
+  errorHandler(app);
 };

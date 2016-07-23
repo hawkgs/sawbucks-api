@@ -1,17 +1,15 @@
 'use strict';
 
-var express = require('express'),
-  env = process.env.NODE_ENV || 'development',
-  config,
-  app;
+const express = require('express');
+const env = process.env.NODE_ENV || 'development';
 
-console.log('process.env.NODE_ENV: ' + process.env.NODE_ENV);
+console.log('process.env.NODE_ENV: ' + env);
 
-app = express();
-config = require('./config/config')[env];
+const app = express();
+const config = require('./config/config')[env];
 
 // Require and run configuration components
-require('./config/express')(app, config);
+require('./config/express')(app);
 require('./config/mongoose')(config);
 require('./config/passport')();
 require('./config/router')(app);
