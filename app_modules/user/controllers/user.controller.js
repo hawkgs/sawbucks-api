@@ -32,7 +32,7 @@ var UserController = {
     userObject.hashPass = encryption.generateHashedPassword(userObject.salt, req.body.password);
 
     // Creating
-    usersData.create(userObject, function (error, user) {
+    usersData.create(userObject, (error, user) => {
       // Mongo errors
       if (error) {
         return res.status(400).send({ success: false, errors: [UserController._mongoValidation(error)] });
@@ -48,14 +48,14 @@ var UserController = {
    * @returns {Array.<string>} Error messages array
    * @private
    */
-  _validate: function (body) {
-    var errors = [];
+  _validate: (body) => {
+    const errors = [];
 
     errors.push(this._validatePasswords(body));
     errors.push(this._validateUsername(body.username));
     errors.push(this._validateEmail(body.email));
 
-    return errors.filter(function (error) {
+    return errors.filter((error) => {
       if (error) {
         return error;
       }
@@ -68,7 +68,7 @@ var UserController = {
    * @returns {string} Error message
    * @private
    */
-  _validatePasswords: function (body) {
+  _validatePasswords: (body) => {
     // Check if the password are present
     if (!body.password || !body.confirmPassword) {
       return 'Missing password(s).';
@@ -76,7 +76,7 @@ var UserController = {
 
     // Check if the passwords are the same
     if (body.password !== body.confirmPassword) {
-      return 'The passwords aren't the same.';
+      return 'The passwords aren\'t the same.';
     }
 
     if (body.password.length < 8 || 25 < body.password.length) {
@@ -92,7 +92,7 @@ var UserController = {
    * @returns {string} Error message
    * @private
    */
-  _validateUsername: function (username) {
+  _validateUsername: (username) => {
     if (!username) {
       return 'Missing username.';
     }
@@ -114,7 +114,7 @@ var UserController = {
    * @returns {string} Error message
    * @private
    */
-  _validateEmail: function (email) {
+  _validateEmail: (email) => {
     if (!email) {
       return 'Missing email.';
     }
@@ -132,13 +132,13 @@ var UserController = {
    * @returns {string} Error message
    * @private
    */
-  _mongoValidation: function (error) {
-    var unique = ['username', 'email'],
-      duplicated;
+  _mongoValidation: (error) => {
+    const unique = ['username', 'email'];
+    let duplicated;
 
     // Duplicated field errors
     if (error.code === DUPL_ERR_CODE) {
-      unique.forEach(function (field) {
+      unique.forEach((field) => {
         if (error.errmsg.indexOf(field) !== -1) {
           duplicated = field;
         }

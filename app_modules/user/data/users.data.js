@@ -11,7 +11,7 @@ module.exports = {
    * @param user {User} - Object with user data
    * @param callback
    */
-  create: function (user, callback) {
+  create: (user, callback) => {
     User.create(user, callback);
   },
 
@@ -20,7 +20,7 @@ module.exports = {
    * @param id {ObjectId}
    * @param callback
    */
-  findById: function (id, callback) {
+  findById: (id, callback) => {
     User.findOne({ _id: id }).exec(callback);
   },
 
@@ -29,7 +29,7 @@ module.exports = {
    * @param username {string}
    * @param callback
    */
-  findByUsername: function (username, callback) {
+  findByUsername: (username, callback) => {
     User.findOne({ username: username }).exec(callback);
   },
 
@@ -39,7 +39,7 @@ module.exports = {
    * @param user {User}
    * @param callback
    */
-  update: function (id, user, callback) {
+  update: (id, user, callback) => {
     User.update({ _id: id }, user, callback);
   }
 };

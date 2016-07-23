@@ -2,7 +2,7 @@
 
 const userController = require('../app_modules/user/controllers').userController;
 const authController = require('../app_modules/user/controllers').authController;
-const errorHandler = require('./errorHandler');
+const errorHandler = require('./error-handler');
 const expressJwt = require('express-jwt');
 const consts = require('../utilities/consts');
 

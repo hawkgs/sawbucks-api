@@ -1,31 +1,29 @@
-"use strict";
+'use strict';
 
-var mongoose = require("mongoose"),
-    Models = require("../app_modules/user/data/models");
+const mongoose = require('mongoose');
+const Models = require('../app_modules/user/data/models');
 
 /**
  * Opens a connection to the MongoDB database and initializes needed models.
  * @param config - Server configuration
  */
-module.exports = function (config) {
-    var db;
+module.exports = (config) => {
+  mongoose.connect(config.db);
+  const db = mongoose.connection;
 
-    mongoose.connect(config.db);
-    db = mongoose.connection;
+  db.once('open', (err) => {
+    if (err) {
+      console.log('Database could not be opened: ' + err);
+      return;
+    }
 
-    db.once("open", function (err) {
-        if (err) {
-            console.log("Database could not be opened: " + err);
-            return;
-        }
+    console.log('Database up and running...');
+  });
 
-        console.log("Database up and running...");
-    });
+  db.on('error', (err) => {
+    console.log('Database error: ' + err);
+  });
 
-    db.on("error", function (err) {
-        console.log("Database error: " + err);
-    });
-
-    // Models initialization
-    Models.User.init();
+  // Models initialization
+  Models.User.init();
 };
