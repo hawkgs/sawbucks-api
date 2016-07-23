@@ -2,7 +2,7 @@
 
 const passport = require('passport');
 const jwt = require('jsonwebtoken');
-const consts = require('../../../utilities/consts');
+const consts = require('../../../utils/consts');
 
 /**
  * Controller for the authentication API.

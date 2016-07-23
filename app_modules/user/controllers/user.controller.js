@@ -1,6 +1,6 @@
 'use strict';
 
-const encryption = require('../../../utilities/encryption');
+const encryption = require('../../../utils/encryption');
 const usersData = require('../data/users.data');
 const DUPL_ERR_CODE = 11000;
 

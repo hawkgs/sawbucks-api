@@ -10,13 +10,13 @@ module.exports = {
   development: {
     host: 'http://localhost',
     rootPath: rootPath,
-    db: 'mongodb://localhost/dot-md',
+    db: 'mongodb://localhost/sawbucks',
     port: process.env.PORT || 3000
   },
   production: {
     host: 'https://dot-md.herokuapp.com/',
     rootPath: rootPath,
-    db: 'fill',
+    db: '!!! fill !!!',
     port: process.env.PORT || 3000
   }
 };

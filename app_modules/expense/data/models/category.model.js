@@ -2,7 +2,7 @@
 
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-const MGDB_REQUIRED_MSG = require('../../../../utilities/consts').MGDB_REQUIRED_MSG;
+const MGDB_REQUIRED_MSG = require('../../../../utils/consts').MGDB_REQUIRED_MSG;
 
 /**
  * Defines 'category' database schema.

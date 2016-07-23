@@ -1,8 +1,8 @@
 'use strict';
 
 const mongoose = require('mongoose');
-const encryption = require('../../../../utilities/encryption');
-const MGDB_REQUIRED_MSG = require('../../../../utilities/consts').MGDB_REQUIRED_MSG;
+const encryption = require('../../../../utils/encryption');
+const MGDB_REQUIRED_MSG = require('../../../../utils/consts').MGDB_REQUIRED_MSG;
 
 /**
  * Defines 'user' database schema and methods.
