@@ -1,6 +1,6 @@
-"use strict";
+'use strict';
 
-var User = require("mongoose").model("User");
+var User = require('mongoose').model('User');
 
 /**
  * A module which creates an abstraction of the database manipulation methods.
