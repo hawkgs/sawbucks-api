@@ -1,0 +1,31 @@
+{
+  "name": "sawbucks",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js",
+    "nodemon": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hAWKdv/sawbucks.git"
+  },
+  "author": "hAWKdv",
+  "bugs": {
+    "url": "https://github.com/hAWKdv/sawbucks/issues"
+  },
+  "homepage": "https://github.com/hAWKdv/sawbucks#readme",
+  "dependencies": {
+    "body-parser": "^1.14.0",
+    "express": "^4.13.3",
+    "express-handlebars": "^2.0.1",
+    "express-jwt": "^3.3.0",
+    "jsonwebtoken": "^5.4.0",
+    "mongoose": "^4.2.2",
+    "passport": "^0.3.0",
+    "passport-local": "^1.0.0"
+  },
+  "devDependencies": {}
+}
