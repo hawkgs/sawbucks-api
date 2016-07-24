@@ -54,8 +54,8 @@ class UsersData {
    * @param user {User}
    * @param callback
    */
-  update(id, user, callback) {
-    User.update({ _id: id }, user, callback);
+  update(pId, user, callback) {
+    User.update({ pId: pId }, user, callback);
   }
 }
 

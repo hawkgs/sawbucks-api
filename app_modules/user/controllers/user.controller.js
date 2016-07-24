@@ -27,7 +27,7 @@ var UserController = {
 
     const userObject = { username: req.body.username };
 
-    // Password
+    // Password and Passcode
     userObject.salt = encryption.generateSalt();
     userObject.hashPass = encryption.generateHashedPassword(userObject.salt, req.body.password);
     userObject.passcode = encryption.generateHashedCode(req.body.passcode.toString());
@@ -44,7 +44,38 @@ var UserController = {
   },
 
   updateUser: (req, res) => {
-    return null;
+    const userObject = {};
+    let validatePass, validateCode;
+
+    if (req.body.password) {
+      validatePass = UserController._validatePasswords(req.body);
+
+      if (!validatePass) {
+        userObject.salt = encryption.generateSalt();
+        userObject.hashPass = encryption.generateHashedPassword(userObject.salt, req.body.password);
+      }
+    }
+
+    if (req.body.passcode) {
+      validateCode = UserController._validatePasscode(req.body.passcode);
+
+      if (!validateCode) {
+        userObject.passcode = encryption.generateHashedCode(req.body.passcode.toString());
+      }
+    }
+
+    const validationErrMsgs = [validatePass, validateCode].filter((error) => !!error);
+    if (validationErrMsgs.length > 0) {
+      return res.status(422).send({ errors: validationErrMsgs });
+    }
+
+    usersData.update(req.user.sub, userObject, (error) => {
+      if (error) {
+        return res.status(422).send({ errors: [errors.MONGO_GENERAL] });
+      }
+
+      res.status(204).send();
+    });
   },
 
   /**
@@ -60,11 +91,7 @@ var UserController = {
     errors.push(UserController._validatePasscode(body.passcode));
     errors.push(UserController._validateUsername(body.username));
 
-    return errors.filter((error) => {
-      if (error) {
-        return error;
-      }
-    });
+    return errors.filter((error) => !!error);
   },
 
   /**
@@ -162,5 +189,6 @@ var UserController = {
 };
 
 module.exports = {
-  createUser: UserController.createUser
+  createUser: UserController.createUser,
+  updateUser: UserController.updateUser
 };

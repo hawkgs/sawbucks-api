@@ -15,12 +15,12 @@ module.exports = (app) => {
   const authenticate = expressJwt({ secret: consts.JWT_SECRET });
 
   // Auth API
-  app.post('/auth/login', AuthController.login);
-  app.post('/auth/code', authenticate, AuthController.validateCode);
+  app.post('/api/auth/login', AuthController.login);
+  app.post('/api/auth/code', authenticate, AuthController.validateCode);
 
   // Users API
   app.route('/api/users').post(UserController.createUser);
-
+  app.route('/api/users/update').post(authenticate, UserController.updateUser);
 
   // Categories API
   // app.route('/api/categories')

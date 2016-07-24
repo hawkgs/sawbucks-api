@@ -12,6 +12,7 @@ const config = require('./config/config')[env];
 require('./config/express')(app);
 require('./config/mongoose')(config);
 
+// Injectables
 const UsersData = require('./app_modules/user/data/users.data');
 const injectables = {
   UsersData: new UsersData(),
