@@ -15,28 +15,32 @@ module.exports = (app) => {
 
   // Auth API
   app.post('/auth/login', AuthController.login);
-  app.get('/auth/valid', authenticate, AuthController.isJwtValid);
+  // app.get('/auth/valid', authenticate, AuthController.isJwtValid);
 
   // Users API
   app.route('/api/users').post(UserController.createUser);
 
+  app.route('/pesho').get(authenticate, function(req, res) {
+    res.send({ msg: 'yolo' });
+  });
+
   // Categories API
-  app.router('/api/categories')
-    .post(null)
-    .get(null)
-    .delete(null);
+  // app.route('/api/categories')
+  //   .post(null)
+  //   .get(null)
+  //   .delete(null);
 
   // Expenses API
-  app.router('/api/expenses')
-    .post(null)
-    .get(null);
+  // app.route('/api/expenses')
+  //   .post(null)
+  //   .get(null);
 
   // Stats API
-  app.router('/api/stats').get(null);
+  // app.route('/api/stats').get(null);
 
   // 404
   app.get('*', (req, res) => {
-    return res.redirect(req.protocol + '://' + req.get('host'));
+    return res.status(404).send({ errors: ['Not found'] });
   });
 
   errorHandler(app);

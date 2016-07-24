@@ -1,8 +1,11 @@
 'use strict';
 
+const env = process.env.NODE_ENV || 'development';
+const MGDB_DUPL_ERR_CODE = require('../../../utils/consts').MGDB_DUPL_ERR_CODE;
+const errors = require('../../../utils/errors');
+const util = require('../../../utils/util');
 const encryption = require('../../../utils/encryption');
 const usersData = require('../data/users.data');
-const DUPL_ERR_CODE = 11000;
 
 /**
  * Controller in charge of user management.
@@ -19,7 +22,7 @@ var UserController = {
 
     // Validation
     if (validationErrMsgs.length > 0) {
-      return res.status(400).send({ errors: validationErrMsgs });
+      return res.status(422).send({ errors: validationErrMsgs });
     }
 
     const userObject = {
@@ -32,14 +35,18 @@ var UserController = {
     userObject.hashPass = encryption.generateHashedPassword(userObject.salt, req.body.password);
 
     // Creating
-    usersData.create(userObject, (error, user) => {
+    usersData.create(userObject, (error) => {
       // Mongo errors
       if (error) {
-        return res.status(400).send({ success: false, errors: [UserController._mongoValidation(error)] });
+        return res.status(422).send({ errors: [UserController._mongoValidation(error)] });
       }
 
-      res.send({ success: true });
+      res.status(201).send({});
     });
+  },
+
+  updateUser: (req, res) => {
+    return null;
   },
 
   /**
@@ -51,9 +58,9 @@ var UserController = {
   _validate: (body) => {
     const errors = [];
 
-    errors.push(this._validatePasswords(body));
-    errors.push(this._validateUsername(body.username));
-    errors.push(this._validateEmail(body.email));
+    errors.push(UserController._validatePasswords(body));
+    errors.push(UserController._validatePasscode(body.passcode));
+    errors.push(UserController._validateUsername(body.username));
 
     return errors.filter((error) => {
       if (error) {
@@ -69,18 +76,36 @@ var UserController = {
    * @private
    */
   _validatePasswords: (body) => {
-    // Check if the password are present
     if (!body.password || !body.confirmPassword) {
-      return 'Missing password(s).';
+      return errors.USER_PASS_MISSING;
     }
 
-    // Check if the passwords are the same
     if (body.password !== body.confirmPassword) {
-      return 'The passwords aren\'t the same.';
+      return errors.USER_PASS_SAME;
     }
 
     if (body.password.length < 8 || 25 < body.password.length) {
-      return 'The password length must be between 8 and 25 symbols.';
+      return errors.USER_PASS_LENGTH;
+    }
+
+    return null;
+  },
+
+  _validatePasscode: (passcode) => {
+    if (!passcode) {
+      return errors.USER_CODE_MISSING;
+    }
+
+    if (passcode.toString().length !== 4) {
+      return errors.USER_CODE_LENGTH;
+    }
+
+    const digits = passcode.toString().split('');
+
+    for (let i = 0; i < digits.length; i+=1) {
+      if (isNaN(parseInt(digits[i]))) {
+        return errors.USER_CODE_DIGITS;
+      }
     }
 
     return null;
@@ -94,36 +119,18 @@ var UserController = {
    */
   _validateUsername: (username) => {
     if (!username) {
-      return 'Missing username.';
+      return errors.USER_NAME_MISSING;
     }
 
     if (username.length < 6 || 25 < username.length) {
-      return 'The username length must be between 6 and 25 symbols.';
+      return errors.USER_NAME_LENGTH;
     }
 
     if (!/^[\w.]+$/.test(username)) {
-      return 'The username can contain only A-Z, a-z, 0-9, _, . symbols.';
+      return errors.USER_NAME_MATCH;
     }
 
-    return '';
-  },
-
-  /**
-   * Validates email address.
-   * @param {string} email
-   * @returns {string} Error message
-   * @private
-   */
-  _validateEmail: (email) => {
-    if (!email) {
-      return 'Missing email.';
-    }
-
-    if (!/^[\w.+-]+@[a-zA-Z\d-]+\.[a-zA-Z0-9-.]+$/.test(email)) {
-      return 'The email address is invalid.';
-    }
-
-    return '';
+    return null;
   },
 
   /**
@@ -133,23 +140,26 @@ var UserController = {
    * @private
    */
   _mongoValidation: (error) => {
-    const unique = ['username', 'email'];
+    const unique = { 'username': errors.USER_NAME_DUPL };
     let duplicated;
 
     // Duplicated field errors
-    if (error.code === DUPL_ERR_CODE) {
-      unique.forEach((field) => {
-        if (error.errmsg.indexOf(field) !== -1) {
-          duplicated = field;
+    if (error.code === MGDB_DUPL_ERR_CODE) {
+      Object.keys(unique).forEach((key) => {
+        if (error.errmsg.indexOf(key) !== -1) {
+          duplicated = unique[key];
         }
       });
 
-      return 'The ' + duplicated + ' is already in use.';
+      return duplicated;
     }
 
-    // Anything else
-    // todo dev only
-    return error.errmsg;
+    if (env === 'development') {
+      return error;
+    } else {
+      util.logToConsole(error);
+      return errors.MONGO_GENERAL;
+    }
   }
 };
 

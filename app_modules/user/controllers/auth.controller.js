@@ -22,7 +22,7 @@ const AuthController = {
 
       // If something is wrong.
       if (!user) {
-        return res.send({ success: false });
+        return res.status(422).send({ errors: ['Invalid credentials'] });
       }
 
       req.logIn(user, { session: false }, (err) => {
@@ -30,26 +30,16 @@ const AuthController = {
           return next(err);
         }
 
+        // Payload
         const token = AuthController._generateToken({
-          //sub: user.
-          username: user.username
+          sub: user.pId,
+          name: user.username,
+          registered: user.createdAt
         });
 
-        res.send({ success: true, username: user.username, token: token });
+        res.status(200).send({ jwt: token });
       });
     })(req, res, next);
-  },
-
-  /**
-   * /auth/valid API: Returns whether a user is authenticated or not by checking the
-   * validity and expiration of his/hers JWT. Note that the current method returns only
-   * successful response. If the user is not authenticated the error message will be handled
-   * by the errorHandler (returning success false).
-   * @param req
-   * @param res
-   */
-  isJwtValid: (req, res) => {
-    res.status(200).send({ success: true });
   },
 
   /**
@@ -59,7 +49,7 @@ const AuthController = {
    */
   _generateToken: (payload) => {
     return jwt.sign(payload, consts.JWT_SECRET, { expiresIn: 60 * 60 * consts.JWT_EXP_HOURS });
-  }
+  },
 };
 
 module.exports = {

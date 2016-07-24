@@ -18,7 +18,7 @@ module.exports = () => {
         return;
       }
 
-      if (user && user.isPasscodeValid(password)) {
+      if (user && user.isPasswordValid(password)) {
         return done(null, user);
       } else {
         return done(null, false);

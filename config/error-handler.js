@@ -1,14 +1,12 @@
 'use strict';
 
-/**
- * Helpers
- * @type {{logToConsole: helpers.logToConsole}}
- */
-const helpers = {
-  logToConsole: (err) => {
-    console.log('\n/////////////////\n' + err.name.toUpperCase() + '\n/////////////////');
-    console.log(err);
-  }
+const helpers = require('../utils/util');
+const errors = require('../utils/errors');
+
+const expressJwtErrMsg = {
+  'No authorization token was found': errors.JWT_MISSING,
+  'jwt malformed': errors.JWT_MALFORMED,
+  'invalid token': errors.JWT_INVALID
 };
 
 /**
@@ -23,13 +21,28 @@ module.exports = (app) => {
 
     // ERRORS
 
+    // json
+    if (err.name === 'SyntaxError') {
+      helpers.logToConsole(err);
+      return res.status(400).send({ errors: [errors.GEN_SYNTAX] });
+    }
+
     // express-jwt
     if (err.name === 'UnauthorizedError') {
-      return res.status(401).send({ success: false, message: err.message });
+      const errCodes = Object.keys(expressJwtErrMsg).map((key) => {
+        if (err.message === key) {
+          return expressJwtErrMsg[key];
+        } else {
+          return null;
+        }
+      })
+      .filter((m) => !!m);
+
+      return res.status(401).send({ errors: errCodes });
     }
 
     // if uncaught
     helpers.logToConsole(err);
-    res.status(500).send({ name: err.name });
+    res.status(500).send({ errors: [err.name] });
   });
 };

@@ -12,7 +12,16 @@ module.exports = {
    * @param callback
    */
   create: (user, callback) => {
-    User.create(user, callback);
+    User.find({}).sort({ $natural: -1 }).limit(1)
+      .exec((err, lastUser) => {
+        if (lastUser.length > 0) {
+          user.pId = lastUser[0].pId + 1;
+        } else {
+          user.pId = 1;
+        }
+
+        User.create(user, callback);
+      });
   },
 
   /**
@@ -21,7 +30,11 @@ module.exports = {
    * @param callback
    */
   findById: (id, callback) => {
-    User.findOne({ _id: id }).exec(callback);
+    User.findOne({ _id: id, isActive: true }).exec(callback);
+  },
+
+  findByPid: (pId, callback) => {
+    User.findOne({ pId: pId, isActive: true }).exec(callback);
   },
 
   /**
