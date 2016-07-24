@@ -2,7 +2,7 @@
 
 const passport = require('passport');
 const LocalStrategy = require('passport-local');
-const usersData = require('../app_modules/user/data/users.data');
+const usersData = require('./injector').get().provide('UsersData');
 
 /**
  * Defines user authentication strategies with Passport.

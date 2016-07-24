@@ -3,6 +3,8 @@
 const passport = require('passport');
 const jwt = require('jsonwebtoken');
 const consts = require('../../../utils/consts');
+const errors = require('../../../utils/errors');
+const usersData = require('../../../config/injector').get().provide('UsersData');
 
 /**
  * Controller for the authentication API.
@@ -22,7 +24,7 @@ const AuthController = {
 
       // If something is wrong.
       if (!user) {
-        return res.status(422).send({ errors: ['Invalid credentials'] });
+        return res.status(422).send({ errors: [errors.USER_CRED_INVALID] });
       }
 
       req.logIn(user, { session: false }, (err) => {
@@ -42,6 +44,24 @@ const AuthController = {
     })(req, res, next);
   },
 
+  validateCode: (req, res, next) => {
+    usersData.findByPid(req.user.sub, (err, user) => {
+      console.log(user);
+
+      if (err) {
+        return next(err);
+      }
+
+      const isPasscodeValid = user.isPasscodeValid(req.passcode);
+
+      if (isPasscodeValid) {
+        return res.status(403).send({ msg: 'no' });
+      }
+
+      return res.status(200).send({ msg: 'yes' });
+    });
+  },
+
   /**
    * Generates a json web token (JWT) by provided @payload. Expiration and secret are located at consts module.
    * @param payload
@@ -54,5 +74,6 @@ const AuthController = {
 
 module.exports = {
   login: AuthController.login,
+  validateCode: AuthController.validateCode,
   isJwtValid: AuthController.isJwtValid
 };

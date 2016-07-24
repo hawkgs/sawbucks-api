@@ -13,6 +13,8 @@ module.exports = (app) => {
   // bodyparser
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({ extended: true }));
+
+  // connect-timeout
   app.use(timeout(REQ_TIMEOUT));
 
   // passport

@@ -11,6 +11,13 @@ const config = require('./config/config')[env];
 // Require and run configuration components
 require('./config/express')(app);
 require('./config/mongoose')(config);
+
+const UsersData = require('./app_modules/user/data/users.data');
+const injectables = {
+  UsersData: new UsersData(),
+};
+
+require('./config/injector').init(injectables);
 require('./config/passport')();
 require('./config/router')(app);
 

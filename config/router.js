@@ -5,6 +5,7 @@ const AuthController = require('../app_modules/user/controllers/auth.controller'
 const errorHandler = require('./error-handler');
 const expressJwt = require('express-jwt');
 const consts = require('../utils/consts');
+const errors = require('../utils/errors');
 
 /**
  * Router.
@@ -15,14 +16,11 @@ module.exports = (app) => {
 
   // Auth API
   app.post('/auth/login', AuthController.login);
-  // app.get('/auth/valid', authenticate, AuthController.isJwtValid);
+  app.post('/auth/code', authenticate, AuthController.validateCode);
 
   // Users API
   app.route('/api/users').post(UserController.createUser);
 
-  app.route('/pesho').get(authenticate, function(req, res) {
-    res.send({ msg: 'yolo' });
-  });
 
   // Categories API
   // app.route('/api/categories')
@@ -40,7 +38,7 @@ module.exports = (app) => {
 
   // 404
   app.get('*', (req, res) => {
-    return res.status(404).send({ errors: ['Not found'] });
+    return res.status(404).send({ errors: [errors.GEN_NOT_FOUND] });
   });
 
   errorHandler(app);

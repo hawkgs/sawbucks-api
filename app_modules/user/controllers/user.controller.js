@@ -5,7 +5,7 @@ const MGDB_DUPL_ERR_CODE = require('../../../utils/consts').MGDB_DUPL_ERR_CODE;
 const errors = require('../../../utils/errors');
 const util = require('../../../utils/util');
 const encryption = require('../../../utils/encryption');
-const usersData = require('../data/users.data');
+const usersData = require('../../../config/injector').get().provide('UsersData');
 
 /**
  * Controller in charge of user management.

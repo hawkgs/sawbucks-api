@@ -2,15 +2,12 @@
 
 /**
  * Response error codes
- * [0, 1, 2, 3]
- * 0 - Subject
- * 1 - Item
- * 2 - Error/Sub-item
- * 3 - Error (in case 2 is sub-item)
  */
 module.exports = {
   // General => G
-  GEN_SYNTAX: 'G000',
+  GEN_SYNTAX: 'G000', // Syntax Error
+  GEN_NOT_FOUND: 'G100', // Not Found Error
+  GEN_SVC_UNAVAILABLE: 'G200', // Service Unavailable Error
 
   // User => U
   // username => 0
@@ -26,6 +23,8 @@ module.exports = {
   USER_CODE_MISSING: 'U200', // Missing passcode.
   USER_CODE_LENGTH: 'U210', // The passcode should consist of 4 digits.
   USER_CODE_DIGITS: 'U220', // The passcode can consist of only digits.
+  // credentails (username, password) => 3
+  USER_CRED_INVALID: 'U300', // Invalid credentials.
 
   // JWT => J0
   JWT_MISSING: 'J000',

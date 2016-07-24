@@ -11,38 +11,42 @@ const expressJwtErrMsg = {
 
 /**
  * Manages all uncaught router errors.
- * @param app - Express
  */
 module.exports = (app) => {
-  app.use((err, req, res, next) => {
-    if (!err) {
-      return next();
-    }
+    app.use((err, req, res, next) => {
+      if (!err) {
+        return next();
+      }
 
-    // ERRORS
+      // ERRORS
 
-    // json
-    if (err.name === 'SyntaxError') {
+      // json
+      if (err.name === 'SyntaxError') {
+        helpers.logToConsole(err);
+        return res.status(400).send({ errors: [errors.GEN_SYNTAX] });
+      }
+
+      // express-jwt
+      if (err.name === 'UnauthorizedError') {
+        const errCodes = Object.keys(expressJwtErrMsg).map((key) => {
+          if (err.message === key) {
+            return expressJwtErrMsg[key];
+          } else {
+            return null;
+          }
+        })
+        .filter((m) => !!m);
+
+        return res.status(401).send({ errors: errCodes });
+      }
+
+      // request timeout
+      if (err.name === 'ServiceUnavailableError') {
+        return res.status(503).send({ errors: [errors.GEN_SVC_UNAVAILABLE] });
+      }
+
+      // if uncaught
       helpers.logToConsole(err);
-      return res.status(400).send({ errors: [errors.GEN_SYNTAX] });
-    }
-
-    // express-jwt
-    if (err.name === 'UnauthorizedError') {
-      const errCodes = Object.keys(expressJwtErrMsg).map((key) => {
-        if (err.message === key) {
-          return expressJwtErrMsg[key];
-        } else {
-          return null;
-        }
-      })
-      .filter((m) => !!m);
-
-      return res.status(401).send({ errors: errCodes });
-    }
-
-    // if uncaught
-    helpers.logToConsole(err);
-    res.status(500).send({ errors: [err.name] });
-  });
+      res.status(500).send({ errors: [err.name] });
+    });
 };
