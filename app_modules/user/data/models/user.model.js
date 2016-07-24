@@ -24,7 +24,8 @@ module.exports.init = () => {
     },
 
     isPasscodeValid: function (passcode) {
-      return this.passcode === passcode;
+      const hashed = encryption.generateHashedCode(passcode.toString());
+      return this.passcode === hashed;
     }
   });
 

@@ -21,8 +21,12 @@ module.exports = {
    * @returns {string}
    */
   generateHashedPassword: (salt, password) => {
-    const hmac = crypto.createHmac('sha1', salt);
+    const hmac = crypto.createHmac('sha256', salt);
 
     return hmac.update(password).digest('hex');
+  },
+
+  generateHashedCode: (passcode) => {
+    return crypto.createHash('sha256').update(passcode).digest('hex');
   }
 };

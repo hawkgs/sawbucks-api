@@ -23,6 +23,7 @@ module.exports = {
   USER_CODE_MISSING: 'U200', // Missing passcode.
   USER_CODE_LENGTH: 'U210', // The passcode should consist of 4 digits.
   USER_CODE_DIGITS: 'U220', // The passcode can consist of only digits.
+  USER_CODE_INVALID: 'U230', // Invalid code.
   // credentails (username, password) => 3
   USER_CRED_INVALID: 'U300', // Invalid credentials.
 

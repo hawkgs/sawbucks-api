@@ -25,14 +25,12 @@ var UserController = {
       return res.status(422).send({ errors: validationErrMsgs });
     }
 
-    const userObject = {
-      username: req.body.username,
-      email: req.body.email
-    };
+    const userObject = { username: req.body.username };
 
     // Password
     userObject.salt = encryption.generateSalt();
     userObject.hashPass = encryption.generateHashedPassword(userObject.salt, req.body.password);
+    userObject.passcode = encryption.generateHashedCode(req.body.passcode.toString());
 
     // Creating
     usersData.create(userObject, (error) => {

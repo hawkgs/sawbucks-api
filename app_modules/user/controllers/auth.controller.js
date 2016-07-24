@@ -45,20 +45,18 @@ const AuthController = {
   },
 
   validateCode: (req, res, next) => {
+    // can be optimized when invalid code
     usersData.findByPid(req.user.sub, (err, user) => {
-      console.log(user);
-
       if (err) {
         return next(err);
       }
 
-      const isPasscodeValid = user.isPasscodeValid(req.passcode);
-
-      if (isPasscodeValid) {
-        return res.status(403).send({ msg: 'no' });
+      const isPasscodeValid = user.isPasscodeValid(req.body.passcode);
+      if (!isPasscodeValid) {
+        return res.status(403).send({ errors: [errors.USER_CODE_INVALID] });
       }
 
-      return res.status(200).send({ msg: 'yes' });
+      res.status(204).send();
     });
   },
 
